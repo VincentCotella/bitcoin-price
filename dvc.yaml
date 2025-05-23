@@ -19,3 +19,11 @@ stages:
       - data/raw/prices.csv
     outs:
       - model/production_model.h5
+
+  export:
+    cmd: python src/export_model_to_tflite.py
+    deps:
+      - src/export_model_to_tflite.py
+      - model/production_model.h5
+    outs:
+      - model/production_model.tflite
