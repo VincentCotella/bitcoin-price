@@ -1,0 +1,25 @@
+schema: '2.0'
+stages:
+  ingest:
+    cmd: python src/ingest.py
+    outs:
+    - path: data/raw/prices.csv
+      hash: md5
+      md5: 2002e596e30e19c2c5b4cd1027271fb9
+      size: 68835
+  quick_train:
+    cmd: python src/quick_train.py
+    deps:
+    - path: data/raw/prices.csv
+      hash: md5
+      md5: 2002e596e30e19c2c5b4cd1027271fb9
+      size: 68835
+    - path: src/quick_train.py
+      hash: md5
+      md5: 300a1114d8759c42b432231d2a969952
+      size: 1463
+    outs:
+    - path: model/quick_mae.txt
+      hash: md5
+      md5: af4b195ab8142d0f990fcaf374ca06ba
+      size: 8
