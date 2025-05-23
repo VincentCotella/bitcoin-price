@@ -1,0 +1,5 @@
+outs:
+- md5: dcde6a832ec42c614b51b953e453056b
+  size: 68825
+  hash: md5
+  path: prices.csv
