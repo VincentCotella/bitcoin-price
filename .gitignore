@@ -175,3 +175,8 @@ cython_debug/
 
 # Data files
 /data/raw/
+
+# MLflow artifacts
+/mlruns/
+# MLflow database
+/mlflow.db
