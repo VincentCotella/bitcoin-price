@@ -1,0 +1,13 @@
+stages:
+  ingest:
+    cmd: python src/ingest.py
+    outs:
+      - data/raw/prices.csv
+
+  quick_train:
+    cmd: python src/quick_train.py
+    deps:
+      - src/quick_train.py
+      - data/raw/prices.csv
+    outs:
+      - model/quick_mae.txt
