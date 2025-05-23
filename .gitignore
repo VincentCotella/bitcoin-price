@@ -180,3 +180,5 @@ cython_debug/
 /mlruns/
 # MLflow database
 /mlflow.db
+
+paylodad.json

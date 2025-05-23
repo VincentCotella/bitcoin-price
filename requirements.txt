@@ -6,3 +6,7 @@ scikit-learn
 scipy
 matplotlib
 mlflow
+prometheus_client
+fastapi
+uvicorn
+pydantic
