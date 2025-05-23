@@ -11,3 +11,11 @@ stages:
       - data/raw/prices.csv
     outs:
       - model/quick_mae.txt
+
+  train:
+    cmd: python src/train.py
+    deps:
+      - src/train.py
+      - data/raw/prices.csv
+    outs:
+      - model/production_model.h5

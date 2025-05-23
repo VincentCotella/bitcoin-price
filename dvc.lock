@@ -23,3 +23,19 @@ stages:
       hash: md5
       md5: af4b195ab8142d0f990fcaf374ca06ba
       size: 8
+  train:
+    cmd: python src/train.py
+    deps:
+    - path: data/raw/prices.csv
+      hash: md5
+      md5: 2002e596e30e19c2c5b4cd1027271fb9
+      size: 68835
+    - path: src/train.py
+      hash: md5
+      md5: 0201e24d5050e00714d2c710a9a04dd9
+      size: 1730
+    outs:
+    - path: model/production_model.h5
+      hash: md5
+      md5: 00fda3e670c8976921e52bd1bc5fc91c
+      size: 76752
