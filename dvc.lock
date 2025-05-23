@@ -39,3 +39,19 @@ stages:
       hash: md5
       md5: 00fda3e670c8976921e52bd1bc5fc91c
       size: 76752
+  export:
+    cmd: python src/export_model_to_tflite.py
+    deps:
+    - path: model/production_model.h5
+      hash: md5
+      md5: 00fda3e670c8976921e52bd1bc5fc91c
+      size: 76752
+    - path: src/export_model_to_tflite.py
+      hash: md5
+      md5: e3bac49bdb4415b8d0358faa72eee6ca
+      size: 1145
+    outs:
+    - path: model/production_model.tflite
+      hash: md5
+      md5: 53d84bbfec1f4caba58f7bda01de070c
+      size: 17472
