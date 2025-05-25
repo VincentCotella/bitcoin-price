@@ -36,3 +36,14 @@ jobs:
           platforms: linux/amd64,linux/arm64
           tags: |
             ${{ secrets.DOCKERHUB_USER }}/bitcoin-pi-inference:latest
+
+      # Build and push GUI image
+      - name: Build & Push GUI image
+        uses: docker/build-push-action@v5
+        with:
+          context: .
+          file: Dockerfile.gui
+          platforms: linux/amd64,linux/arm64
+          push: true
+          tags: |
+            ${{ secrets.DOCKERHUB_USER }}/bitcoin-pi-gui:latest

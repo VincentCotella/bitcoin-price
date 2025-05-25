@@ -1,0 +1,55 @@
+# docker-compose.yml
+version: '3.8'
+
+services:
+  inference:
+    image: vincentcotella/bitcoin-pi-inference:latest
+    container_name: btc-scorer
+    restart: unless-stopped
+    ports:
+      - "8000:8000"   # /predict
+      - "8001:8001"   # /metrics
+    volumes:
+      - ./data:/app/data            # pour l’ingestion, si tu gères data/raw via DVC local
+      - ./model:/app/model          # pour charger production_model.tflite localement
+
+  gui:
+    image: vincentcotella/bitcoin-pi-gui:latest
+    container_name: btc-gui
+    restart: unless-stopped
+    ports:
+      - "8501:8501"  # Streamlit UI
+    depends_on:
+      - inference
+
+  prometheus:
+    image: prom/prometheus:latest
+    container_name: prometheus
+    restart: unless-stopped
+    ports:
+      - "9090:9090"
+    volumes:
+      - ./prometheus/prometheus.yml:/etc/prometheus/prometheus.yml
+
+  alertmanager:
+    image: prom/alertmanager:latest
+    container_name: alertmanager
+    restart: unless-stopped
+    ports:
+      - "9093:9093"
+    volumes:
+      - ./alertmanager/alertmanager.yml:/etc/alertmanager/alertmanager.yml
+
+  grafana:
+    image: grafana/grafana:latest
+    container_name: grafana
+    restart: unless-stopped
+    ports:
+      - "3000:3000"
+    depends_on:
+      - prometheus
+    volumes:
+      - grafana-storage:/var/lib/grafana
+
+volumes:
+  grafana-storage:
