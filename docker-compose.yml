@@ -1,26 +1,43 @@
-# docker-compose.yml
 version: '3.8'
-
 services:
   inference:
     image: vincentcotella/bitcoin-pi-inference:latest
     container_name: btc-scorer
     restart: unless-stopped
     ports:
-      - "8000:8000"   # /predict
-      - "8001:8001"   # /metrics
+      - "8000:8000"
+      - "8001:8001"
     volumes:
-      - ./data:/app/data            # pour l’ingestion, si tu gères data/raw via DVC local
-      - ./model:/app/model          # pour charger production_model.tflite localement
+      - ./data:/app/data
+      - ./model:/app/model
+
+  pipeline:
+    image: python:3.10-slim
+    container_name: btc-pipeline
+    restart: unless-stopped
+    working_dir: /app
+    volumes:
+      - ./:/app
+    command: >
+      sh -c "
+        pip install --no-cache-dir -r requirements.txt &&
+        while true; do
+          python src/ingest.py &&
+          python src/predict_and_log.py &&
+          sleep 60;
+        done
+      "
+    depends_on:
+      - inference
 
   gui:
     image: vincentcotella/bitcoin-pi-gui:latest
     container_name: btc-gui
     restart: unless-stopped
     ports:
-      - "8501:8501"  # Streamlit UI
+      - "8501:8501"
     depends_on:
-      - inference
+      - pipeline
 
   prometheus:
     image: prom/prometheus:latest
