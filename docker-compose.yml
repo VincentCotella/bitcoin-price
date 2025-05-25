@@ -1,12 +1,11 @@
-version: '3.8'
 services:
   inference:
     image: vincentcotella/bitcoin-pi-inference:latest
     container_name: btc-scorer
     restart: unless-stopped
     ports:
-      - "8000:8000"
-      - "8001:8001"
+      - "8000:8000"   # /predict
+      - "8001:8001"   # /metrics
     volumes:
       - ./data:/app/data
       - ./model:/app/model
@@ -30,14 +29,53 @@ services:
     depends_on:
       - inference
 
+  retrainer:
+    image: python:3.10-slim
+    container_name: btc-retrainer
+    restart: unless-stopped
+    working_dir: /app
+    volumes:
+      - ./:/app
+    command: >
+      sh -c "
+        pip install --no-cache-dir -r requirements.txt mlflow &&
+        while true; do
+          python src/train.py &&
+          python src/export_model_to_tflite.py &&
+          sleep 1800;
+        done
+      "
+    depends_on:
+      - inference
+
   gui:
     image: vincentcotella/bitcoin-pi-gui:latest
     container_name: btc-gui
     restart: unless-stopped
     ports:
-      - "8501:8501"
+      - "8501:8501"  # Streamlit UI
     depends_on:
       - pipeline
+      - retrainer
+
+  mlflow:
+    image: python:3.10-slim
+    container_name: mlflow
+    restart: unless-stopped
+    working_dir: /app
+    volumes:
+      - ./:/app
+      - mlruns:/app/mlruns
+    ports:
+      - "5000:5000"
+    command: >
+      sh -c "
+        pip install --no-cache-dir mlflow &&
+        mlflow server \
+          --backend-store-uri sqlite:///mlflow.db \
+          --default-artifact-root /app/mlruns \
+          --host 0.0.0.0 --port 5000
+      "
 
   prometheus:
     image: prom/prometheus:latest
@@ -46,7 +84,7 @@ services:
     ports:
       - "9090:9090"
     volumes:
-      - ./prometheus/prometheus.yml:/etc/prometheus/prometheus.yml
+      - ./prometheus:/etc/prometheus
 
   alertmanager:
     image: prom/alertmanager:latest
@@ -55,7 +93,7 @@ services:
     ports:
       - "9093:9093"
     volumes:
-      - ./alertmanager/alertmanager.yml:/etc/alertmanager/alertmanager.yml
+      - ./alertmanager:/etc/alertmanager
 
   grafana:
     image: grafana/grafana:latest
@@ -70,3 +108,4 @@ services:
 
 volumes:
   grafana-storage:
+  mlruns:
