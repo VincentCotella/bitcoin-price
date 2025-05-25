@@ -10,3 +10,5 @@ prometheus_client
 fastapi
 uvicorn
 pydantic
+streamlit
+plotly
