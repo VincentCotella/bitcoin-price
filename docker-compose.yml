@@ -1,11 +1,12 @@
+# docker-compose.yml
 services:
   inference:
     image: vincentcotella/bitcoin-pi-inference:latest
     container_name: btc-scorer
     restart: unless-stopped
     ports:
-      - "8000:8000"   # /predict
-      - "8001:8001"   # /metrics
+      - "8000:8000"   # Endpoint /predict
+      - "8001:8001"   # /metrics pour Prometheus
     volumes:
       - ./data:/app/data
       - ./model:/app/model
@@ -53,7 +54,7 @@ services:
     container_name: btc-gui
     restart: unless-stopped
     ports:
-      - "8501:8501"  # Streamlit UI
+      - "8501:8501"  # Interface Streamlit
     depends_on:
       - pipeline
       - retrainer

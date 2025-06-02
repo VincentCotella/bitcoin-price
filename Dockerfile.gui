@@ -2,13 +2,12 @@
 FROM python:3.10-slim
 WORKDIR /app
 
-# Install GUI dependencies
+# Installer les dépendances GUI
 COPY requirements.txt .
 RUN pip install --no-cache-dir streamlit plotly pandas requests
 
-# Copy GUI code
+# Copier le code GUI
 COPY src/gui.py ./src/gui.py
-# Si tu veux monter les données en volume, pas besoin de copier data/raw ici
 
 EXPOSE 8501
 CMD ["streamlit", "run", "src/gui.py", "--server.port=8501", "--server.address=0.0.0.0"]

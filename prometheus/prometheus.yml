@@ -1,0 +1,7 @@
+global:
+  scrape_interval: 15s
+
+scrape_configs:
+  - job_name: 'btc-scorer'
+    static_configs:
+      - targets: ['inference:8001']  # scrapper le service inference:8001
